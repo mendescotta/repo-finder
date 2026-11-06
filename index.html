@@ -18,9 +18,18 @@ input:not([type=checkbox]),select{background:var(--field);border-color:var(--fie
 .readme-view pre code{white-space:pre;color:var(--text)}.readme-view code{background:var(--panel);padding:2px 4px;border-radius:4px}
 .readme-view ul,.readme-view ol{padding-left:23px}.readme-view li{margin:5px 0}.readme-view blockquote{border-left:3px solid var(--field-border);padding-left:12px;margin:12px 0;color:var(--muted)}
 .readme-view img{max-width:100%;height:auto}.readme-view table{border-collapse:collapse;display:block;overflow-x:auto;max-width:100%}.readme-view th,.readme-view td{border:1px solid var(--border);padding:6px 9px}.readme-view hr{border:0;border-top:1px solid var(--border)}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:14px}.tabs a{flex:1;text-align:center;padding:10px;border-radius:9px;color:var(--muted);text-decoration:none;font-weight:650;font-size:14px}.tabs a[aria-current=page]{background:var(--secondary);color:var(--text)}
+.search-field{position:relative}.search-field input:not([type=checkbox]){padding-right:56px;min-height:50px}.search-field button{position:absolute;top:3px;right:3px;bottom:3px;width:46px;min-height:0;padding:0;display:flex;align-items:center;justify-content:center}.search-field svg{width:22px;height:22px}
+.summary{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}.summary .language-chips{margin-top:0;flex:1 1 auto}.summary .language-chips:empty{display:none}#filterToggle{font-size:13px;min-height:36px;padding:7px 12px;margin-left:auto}
+#form.collapsed{padding:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}#form.collapsed label[for=keywords]{display:none}#form.collapsed .search-field{flex:1 1 160px}#form.collapsed .summary,#form.collapsed .language-chips{display:contents}#form.collapsed #filterToggle{min-height:50px;margin:0}#form.collapsed #filterChips button{order:1}
+.repo .top h3{min-width:0}.star{flex:0 0 auto;width:44px;min-height:44px;padding:0;background:transparent;color:var(--muted);font-size:24px;font-weight:400;line-height:1}.star[aria-pressed=true]{color:#f5c518}
+.note{display:block;width:100%;margin-top:12px;background:var(--field);border:1px solid var(--field-border);border-radius:10px;color:var(--text);padding:10px 12px;font:inherit;resize:vertical}.note:focus{outline:2px solid #66a8ff;outline-offset:1px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));width:min(calc(100% - 24px),520px);display:flex;align-items:center;justify-content:space-between;gap:12px;background:#171717;border:1px solid var(--field-border);border-radius:12px;padding:8px 8px 8px 14px;font-size:14px;z-index:10;overflow-wrap:anywhere}.toast button{flex:0 0 auto;min-height:40px;padding:8px 14px}
 </style></head><body><main><header><div class="logo"><span aria-hidden="true" style="font-size:31px">⌕</span><div><h1>Repo Finder</h1><div class="muted">GitHub advanced search</div></div></div><button type="button" id="install" class="secondary hide">Install</button></header><p id="installHint" class="small muted hide" role="status"></p>
-<form id="form" class="panel"><label for="keywords">Keywords</label><input id="keywords" placeholder="e.g. GTK4 package manager" autocomplete="off"><label>Search keywords in</label><div class="checks"><label><input type="checkbox" name="scope" value="name" checked> Name</label><label><input type="checkbox" name="scope" value="description" checked> Description</label><label><input type="checkbox" name="scope" value="readme" checked> README</label></div><div class="grid"><div><label for="language">Languages (match any)</label><div class="lang-entry"><input id="language" list="langs" placeholder="Add a language" autocomplete="off"><button type="button" id="addLanguage" class="secondary">Add</button></div><div id="languageChips" class="language-chips" aria-live="polite"></div><datalist id="langs"><option>C</option><option>C++</option><option>Rust</option><option>Python</option><option>Go</option><option>JavaScript</option><option>TypeScript</option><option>Java</option><option>Kotlin</option><option>Shell</option><option>Zig</option><option>Lua</option><option>Swift</option></datalist></div><div><label for="sort">Sort</label><select id="sort"><option value="best">Best match</option><option value="stars">Most stars</option><option value="forks">Most forks</option><option value="updated">Recently updated</option></select></div></div><div class="grid"><div><label for="minStars">Minimum stars</label><input type="number" min="0" id="minStars" placeholder="0"></div><div><label for="maxStars">Maximum stars</label><input type="number" min="0" id="maxStars" placeholder="No maximum"></div></div><div class="grid"><div><label for="pushed">Last pushed</label><select id="pushed"><option value="">Any time</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last year</option><option value="custom">Since specific date</option></select></div><div id="dateWrap" class="hide"><label for="since">Pushed since</label><input id="since" type="date"></div></div><label class="toggle"><input type="checkbox" id="includeForks"> Include forked repositories in results</label><div class="actions"><button type="submit" id="search">Search repositories</button><button type="button" id="save" class="secondary">Save search</button></div><p class="small muted">Public repositories only. README files load on demand. GitHub API rate limits apply.</p></form>
-<div class="panel"><div class="top"><strong>Saved searches</strong><button id="clear" type="button" class="secondary small">Clear</button></div><select id="saved"><option value="">Select a saved search…</option></select></div><div id="status" class="status" role="status" aria-live="polite"></div><div id="results"></div><div id="scrollSentinel" aria-hidden="true" style="height:1px"></div><div class="actions"><button id="more" class="secondary hide">Load more</button><button id="github" class="secondary hide">Open search on GitHub ↗</button></div></main><script>
+<nav class="tabs" aria-label="Views"><a href="#" id="tabSearch" aria-current="page">Search</a><a href="#bookmarks" id="tabBookmarks">Bookmarks</a></nav><div id="searchView">
+<form id="form" class="panel"><label for="keywords">Keywords</label><div class="search-field"><input id="keywords" aria-label="Keywords" placeholder="e.g. GTK4 package manager" autocomplete="off" enterkeyhint="search"><button type="submit" id="searchIcon" aria-label="Search repositories"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></button></div><div class="summary"><div id="filterChips" class="language-chips"></div><button type="button" id="filterToggle" class="secondary" aria-controls="filters" aria-expanded="true">Hide filters</button></div><div id="filters"><label>Search keywords in</label><div class="checks"><label><input type="checkbox" name="scope" value="name" checked> Name</label><label><input type="checkbox" name="scope" value="description" checked> Description</label><label><input type="checkbox" name="scope" value="readme" checked> README</label></div><div class="grid"><div><label for="language">Languages (match any)</label><div class="lang-entry"><input id="language" list="langs" placeholder="Add a language" autocomplete="off"><button type="button" id="addLanguage" class="secondary">Add</button></div><div id="languageChips" class="language-chips" aria-live="polite"></div><datalist id="langs"><option>C</option><option>C++</option><option>Rust</option><option>Python</option><option>Go</option><option>JavaScript</option><option>TypeScript</option><option>Java</option><option>Kotlin</option><option>Shell</option><option>Zig</option><option>Lua</option><option>Swift</option></datalist></div><div><label for="sort">Sort</label><select id="sort"><option value="best">Best match</option><option value="stars">Most stars</option><option value="forks">Most forks</option><option value="updated">Recently updated</option></select></div></div><div class="grid"><div><label for="minStars">Minimum stars</label><input type="number" min="0" id="minStars" placeholder="0"></div><div><label for="maxStars">Maximum stars</label><input type="number" min="0" id="maxStars" placeholder="No maximum"></div></div><div class="grid"><div><label for="pushed">Last pushed</label><select id="pushed"><option value="">Any time</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option><option value="365">Last year</option><option value="custom">Since specific date</option></select></div><div id="dateWrap" class="hide"><label for="since">Pushed since</label><input id="since" type="date"></div></div><label class="toggle"><input type="checkbox" id="includeForks"> Include forked repositories in results</label><div class="actions"><button type="submit" id="search">Search repositories</button><button type="button" id="save" class="secondary">Save search</button></div><p class="small muted">Public repositories only. README files load on demand. GitHub API rate limits apply.</p></div></form>
+<div id="savedPanel" class="panel"><div class="top"><strong>Saved searches</strong><button id="clear" type="button" class="secondary small">Clear</button></div><select id="saved"><option value="">Select a saved search…</option></select></div><div id="status" class="status" role="status" aria-live="polite"></div><div id="results"></div><div id="scrollSentinel" aria-hidden="true" style="height:1px"></div><div class="actions"><button id="more" class="secondary hide">Load more</button><button id="github" class="secondary hide">Open search on GitHub ↗</button></div></div>
+<div id="bookmarksView" class="hide"><p id="bookmarksEmpty" class="muted hide">No bookmarks yet. Tap the ☆ on a search result to keep it here.</p><div id="bookmarkResults"></div></div><div id="toast" class="toast hide" role="status"><span id="toastText"></span><button type="button" id="toastUndo" class="secondary hide">Undo</button></div></main><script>
 /**
  * marked - a markdown parser
  * Copyright (c) 2011-2022, Christopher Jeffrey. (MIT Licensed)
@@ -3087,13 +3096,18 @@ input:not([type=checkbox]),select{background:var(--field);border-color:var(--fie
 </script><script>
 const $=id=>document.getElementById(id),ids=['keywords','sort','minStars','maxStars','pushed','since'];let selectedLanguages=[];let current='',currentSort='best',page=1,total=0,busy=false,hasMore=false,requestId=0,controller=null;
 function formState(){return Object.fromEntries([...ids.map(id=>[id,$(id).value]),['scope',[...document.querySelectorAll('input[name=scope]:checked')].map(x=>x.value)],['includeForks',$('includeForks').checked],['languages',selectedLanguages.slice()]])}
-function restore(s){selectedLanguages=Array.isArray(s.languages)?s.languages.slice():s.language?[s.language]:[];renderLanguages();$('language').value='';ids.forEach(id=>$(id).value=s[id]||'');document.querySelectorAll('input[name=scope]').forEach(x=>x.checked=(s.scope||[]).includes(x.value));$('dateWrap').classList.toggle('hide',s.pushed!=='custom');$('includeForks').checked=!!s.includeForks}
+function restore(s){selectedLanguages=Array.isArray(s.languages)?s.languages.slice():s.language?[s.language]:[];renderLanguages();$('language').value='';ids.forEach(id=>$(id).value=s[id]||'');if(!$('sort').value)$('sort').value='best';document.querySelectorAll('input[name=scope]').forEach(x=>x.checked=(s.scope||[]).includes(x.value));$('dateWrap').classList.toggle('hide',s.pushed!=='custom');$('includeForks').checked=!!s.includeForks}
 function query(){const s=formState(),q=[];if(s.keywords.trim()){q.push(s.keywords.trim());if(s.scope.length)q.push('in:'+s.scope.join(','))}if(s.includeForks)q.push('fork:true');for(const lang of s.languages)q.push('language:"'+lang.replace(/"/g,'')+'"');if(s.minStars||s.maxStars)q.push('stars:'+(s.minStars||'0')+'..'+(s.maxStars||'*'));if(s.pushed){let d=s.pushed==='custom'?s.since:new Date(Date.now()-Number(s.pushed)*86400000).toISOString().slice(0,10);if(d)q.push('pushed:>='+d)}return q.join(' ')}
 function url(){const p=new URLSearchParams({q:current||'stars:>=0',type:'repositories'});if(currentSort!=='best'){p.set('s',currentSort);p.set('o','desc')}return 'https://github.com/search?'+p}
 function setStatus(t){$('status').textContent=t}
 function repoCard(r){
  const card=document.createElement('article');card.className='repo';
  const h=document.createElement('h3'),a=document.createElement('a');a.href=r.html_url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=r.full_name;h.append(a);
+ card.dataset.repo=r.full_name;
+ const top=document.createElement('div');top.className='top';
+ const star=document.createElement('button');star.type='button';star.className='star';star.addEventListener('click',()=>toggleBookmark(r));top.append(h,star);
+ const note=document.createElement('textarea');note.className='note';note.rows=2;note.maxLength=500;note.placeholder='Why did you save this? (optional)';note.setAttribute('aria-label','Note for '+r.full_name);
+ note.addEventListener('input',()=>{const b=findBookmark(r.full_name);if(b){b.note=note.value;persistBookmarks();updateCards()}});
  const desc=document.createElement('p');desc.className='repo-description';desc.textContent=r.description||'No description';
  const meta=document.createElement('div');meta.className='meta';
  for(const val of ['★ '+Number(r.stargazers_count).toLocaleString(),'⑂ '+Number(r.forks_count).toLocaleString()+' forks',r.language||'Unknown language','Pushed '+new Date(r.pushed_at).toLocaleDateString()]){const span=document.createElement('span');span.textContent=val;meta.append(span)}
@@ -3116,7 +3130,7 @@ function repoCard(r){
   }catch(e){view.textContent='Unable to load README: '+e.message}
   finally{loading=false}
  });
- card.append(h,desc,meta,toggle,view);return card;
+ card.append(top,desc,meta,note,toggle,view);updateCard(card);return card;
 }
 // Session-only LRU cache: at most 20 READMEs, fetched on first expansion.
 const readmeCache=new Map();
@@ -3153,17 +3167,77 @@ function renderReadme(root,markdown,repo){
  if(!root.childNodes.length)root.textContent='README is empty.';
 }
 
-const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)&&hasMore&&!busy)search(false)},{rootMargin:'350px 0px'});
+const bookmarkKey='repo-finder-bookmarks';
+function loadBookmarks(){try{const v=JSON.parse(localStorage.getItem(bookmarkKey)||'[]');return Array.isArray(v)?v.filter(b=>b&&typeof b.full_name==='string'):[]}catch{return []}}
+let bookmarks=loadBookmarks(),toastTimer=0,searchScroll=0;
+const findBookmark=name=>bookmarks.find(b=>b.full_name===name);
+function persistBookmarks(){try{localStorage.setItem(bookmarkKey,JSON.stringify(bookmarks));return true}catch{showToast('Could not save on this device. Storage may be full or blocked.');return false}}
+function hideToast(){clearTimeout(toastTimer);$('toast').classList.add('hide')}
+function showToast(text,undo){$('toastText').textContent=text;$('toastUndo').classList.toggle('hide',!undo);$('toastUndo').onclick=()=>{hideToast();undo()};$('toast').classList.remove('hide');clearTimeout(toastTimer);toastTimer=setTimeout(hideToast,6000)}
+function updateCard(card){
+ const name=card.dataset.repo,b=findBookmark(name),star=card.querySelector('.star'),note=card.querySelector('.note');
+ star.textContent=b?'★':'☆';star.setAttribute('aria-pressed',String(!!b));star.setAttribute('aria-label',(b?'Remove bookmark for ':'Bookmark ')+name);
+ note.classList.toggle('hide',!b);if(note!==document.activeElement)note.value=b?b.note||'':'';
+}
+function updateCards(){document.querySelectorAll('.repo').forEach(updateCard)}
+function bookmarkCard(b){const card=repoCard(b),when=document.createElement('span');when.textContent='Saved '+new Date(b.savedAt).toLocaleDateString();card.querySelector('.meta').append(when);return card}
+function renderBookmarks(){
+ // Reuses existing cards so removing one bookmark leaves other open READMEs alone.
+ const root=$('bookmarkResults'),existing=new Map([...root.children].map(c=>[c.dataset.repo,c]));
+ root.replaceChildren(...bookmarks.map(b=>existing.get(b.full_name)||bookmarkCard(b)));
+ $('bookmarksEmpty').classList.toggle('hide',bookmarks.length>0);
+}
+function syncBookmarks(){$('tabBookmarks').textContent='Bookmarks'+(bookmarks.length?' ('+bookmarks.length+')':'');if(location.hash==='#bookmarks')renderBookmarks();updateCards()}
+function toggleBookmark(r){
+ const name=r.full_name,i=bookmarks.findIndex(b=>b.full_name===name);
+ if(i<0){
+  hideToast();
+  bookmarks.unshift({full_name:name,html_url:r.html_url,description:r.description,stargazers_count:r.stargazers_count,forks_count:r.forks_count,language:r.language,pushed_at:r.pushed_at,default_branch:r.default_branch,note:'',savedAt:Date.now()});
+  if(!persistBookmarks())bookmarks.shift();
+ }else{
+  const removed=bookmarks.splice(i,1)[0];
+  if(persistBookmarks())showToast('Removed '+name,()=>{if(findBookmark(name))return;bookmarks.splice(Math.min(i,bookmarks.length),0,removed);if(!persistBookmarks())bookmarks.splice(bookmarks.indexOf(removed),1);syncBookmarks()});
+  else bookmarks.splice(i,0,removed);
+ }
+ syncBookmarks();
+}
+function showView(){
+ const toBookmarks=location.hash==='#bookmarks',wasBookmarks=!$('bookmarksView').classList.contains('hide');
+ if(toBookmarks&&!wasBookmarks)searchScroll=window.scrollY;
+ $('searchView').classList.toggle('hide',toBookmarks);$('bookmarksView').classList.toggle('hide',!toBookmarks);
+ $('tabSearch').removeAttribute('aria-current');$('tabBookmarks').removeAttribute('aria-current');$(toBookmarks?'tabBookmarks':'tabSearch').setAttribute('aria-current','page');
+ if(toBookmarks)renderBookmarks();
+ if(toBookmarks!==wasBookmarks)window.scrollTo(0,toBookmarks?0:searchScroll);
+}
+function activeFilters(){
+ const s=formState(),out=[];
+ if(s.keywords.trim()&&s.scope.length&&s.scope.length<3)out.push({label:'In '+s.scope.join(', '),clear(){document.querySelectorAll('input[name=scope]').forEach(x=>x.checked=true)}});
+ for(const lang of s.languages)out.push({label:lang,clear(){selectedLanguages=selectedLanguages.filter(x=>x!==lang);renderLanguages()}});
+ if(s.minStars||s.maxStars)out.push({label:'★ '+(s.minStars&&s.maxStars?s.minStars+'–'+s.maxStars:s.minStars?s.minStars+'+':'up to '+s.maxStars),clear(){$('minStars').value='';$('maxStars').value=''}});
+ if(s.pushed&&(s.pushed!=='custom'||s.since))out.push({label:s.pushed==='custom'?'Since '+s.since:$('pushed').selectedOptions[0].text,clear(){$('pushed').value='';$('since').value='';$('dateWrap').classList.add('hide')}});
+ if(s.includeForks)out.push({label:'Including forks',clear(){$('includeForks').checked=false}});
+ if(s.sort!=='best')out.push({label:$('sort').selectedOptions[0].text,clear(){$('sort').value='best'}});
+ return out;
+}
+function renderSummary(){
+ const collapsed=$('form').classList.contains('collapsed'),filters=activeFilters(),root=$('filterChips');
+ root.replaceChildren();
+ if(collapsed)for(const f of filters){const b=document.createElement('button');b.type='button';b.textContent=f.label+' ×';b.setAttribute('aria-label','Remove filter: '+f.label);b.onclick=()=>{f.clear();search();$('filterToggle').focus()};root.append(b)}
+ $('filterToggle').textContent=collapsed?'Filters':'Hide filters';$('filterToggle').setAttribute('aria-expanded',String(!collapsed));
+}
+function setCollapsed(collapsed){$('form').classList.toggle('collapsed',collapsed);$('filters').classList.toggle('hide',collapsed);$('savedPanel').classList.toggle('hide',collapsed);renderSummary()}
+$('filterToggle').onclick=()=>setCollapsed(!$('form').classList.contains('collapsed'));
+const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)&&hasMore&&!busy&&$('scrollSentinel').getBoundingClientRect().top<window.innerHeight+350)search(false)},{rootMargin:'350px 0px'});
 observer.observe($('scrollSentinel'));
 async function search(reset=true){
  if(reset){
   requestId++;if(controller)controller.abort();busy=false;
-  const q=query();if(!q){hasMore=false;$('results').replaceChildren();$('more').classList.add('hide');$('github').classList.add('hide');setStatus('Enter a keyword or choose at least one filter.');return}
-  current=q;currentSort=$('sort').value;page=1;total=0;hasMore=true;$('results').replaceChildren();
+  const q=query();if(!q){hasMore=false;$('results').replaceChildren();$('more').classList.add('hide');$('github').classList.add('hide');$('search').disabled=false;$('searchIcon').disabled=false;setCollapsed(false);setStatus('Enter a keyword or choose at least one filter.');return}
+  current=q;currentSort=$('sort').value;page=1;total=0;hasMore=true;$('results').replaceChildren();setCollapsed(true);window.scrollTo(0,0);if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
  }
  if(busy||!hasMore)return;
  const id=requestId;controller=new AbortController();busy=true;
- $('search').disabled=true;$('more').disabled=true;$('github').classList.remove('hide');$('more').classList.add('hide');
+ $('search').disabled=true;$('searchIcon').disabled=true;$('more').disabled=true;$('github').classList.remove('hide');$('more').classList.add('hide');
  setStatus(page===1?'Searching…':'Loading more repositories…');
  try{
   const p=new URLSearchParams({q:current,per_page:'30',page:String(page)});
@@ -3178,7 +3252,7 @@ async function search(reset=true){
   setStatus(`${shown.toLocaleString()} of ${total.toLocaleString()} matching repositories${total>1000?' (GitHub API provides at most 1,000 results per query)':''}${data.incomplete_results?' (GitHub reports incomplete results)':''}`);
   page++;
  }catch(e){if(id!==requestId||e.name==='AbortError')return;hasMore=false;setStatus('Error: '+e.message)}
- finally{if(id===requestId){busy=false;$('search').disabled=false;$('more').disabled=false;$('more').classList.toggle('hide',!hasMore)}}
+ finally{if(id===requestId){busy=false;$('search').disabled=false;$('searchIcon').disabled=false;$('more').disabled=false;$('more').classList.toggle('hide',!hasMore)}}
 }
 function renderLanguages(){const root=$('languageChips');root.replaceChildren();selectedLanguages.forEach((lang,i)=>{const b=document.createElement('button');b.type='button';b.textContent=lang+' ×';b.setAttribute('aria-label','Remove '+lang);b.onclick=()=>{selectedLanguages.splice(i,1);renderLanguages()};root.append(b)})}
 function addLanguage(){const val=$('language').value.trim();if(val&&!selectedLanguages.some(x=>x.toLowerCase()===val.toLowerCase()))selectedLanguages.push(val);$('language').value='';renderLanguages()}
@@ -3186,6 +3260,7 @@ $('addLanguage').onclick=addLanguage;$('language').addEventListener('keydown',e=
 function savedItems(){try{return JSON.parse(localStorage.getItem('repo-finder-saved')||'[]')}catch{return []}}
 function refreshSaved(){const items=savedItems();$('saved').replaceChildren(new Option('Select a saved search…',''));items.forEach((s,i)=>$('saved').add(new Option(s.label,String(i))))}
 $('form').addEventListener('submit',e=>{e.preventDefault();if($('language').value.trim())addLanguage();search()});$('pushed').addEventListener('change',()=> $('dateWrap').classList.toggle('hide',$('pushed').value!=='custom'));$('more').onclick=()=>search(false);$('github').onclick=()=>window.open(url(),'_blank','noopener');$('save').onclick=()=>{const s=formState(),label=query();if(!label){setStatus('Set at least one filter before saving.');return}const items=savedItems();items.unshift({label,state:s});localStorage.setItem('repo-finder-saved',JSON.stringify(items.slice(0,30)));refreshSaved();setStatus('Search saved on this device.')};$('saved').onchange=()=>{const s=savedItems()[Number($('saved').value)];if(s){restore(s.state);search()}};$('clear').onclick=()=>{localStorage.removeItem('repo-finder-saved');refreshSaved();setStatus('Saved searches cleared.')};refreshSaved();
+history.scrollRestoration='manual';window.addEventListener('hashchange',showView);window.addEventListener('storage',e=>{if(e.key===bookmarkKey){bookmarks=loadBookmarks();syncBookmarks()}});showView();syncBookmarks();
 let installPrompt=null;const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 function hideInstall(){$('install').classList.add('hide');$('installHint').classList.add('hide')}
 if(matchMedia('(hover:none) and (pointer:coarse)').matches&&!matchMedia('(display-mode: standalone)').matches&&navigator.standalone!==true){$('install').classList.remove('hide');window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;$('installHint').classList.add('hide')});window.addEventListener('appinstalled',hideInstall);$('install').onclick=async()=>{if(installPrompt){const p=installPrompt;installPrompt=null;p.prompt();const{outcome}=await p.userChoice;if(outcome==='accepted')hideInstall();return}$('installHint').textContent=isIOS?'Tap the Share button, then “Add to Home Screen”.':'Open your browser menu and choose “Install app” or “Add to Home screen”.';$('installHint').classList.toggle('hide')}}
